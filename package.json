@@ -3,7 +3,7 @@
     "version": "0.46.1",
     "description": "Code Forge CLI - an AI-powered coding assistant",
     "bin": {
-        "forge": "./forge"
+        "forge": "forge.js"
     },
     "scripts": {
         "postinstall": "node install.js"
@@ -26,7 +26,8 @@
     "homepage": "https://antinomy.ai/",
     "files": [
         "bin/**/*",
-        "install.js"
+        "install.js",
+        "forge.js"
     ],
     "engines": {
         "node": ">=18.0.0"
