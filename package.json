@@ -1,0 +1,34 @@
+{
+    "name": "@antinomyhq/forge",
+    "version": "0.46.1",
+    "description": "Code Forge CLI - an AI-powered coding assistant",
+    "bin": {
+        "forge": "./forge"
+    },
+    "scripts": {
+        "postinstall": "node install.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/antinomyhq/forge.git"
+    },
+    "keywords": [
+        "code-forge",
+        "ai",
+        "assistant",
+        "cli"
+    ],
+    "author": "Antinomy Inc.",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/antinomyhq/forge/issues"
+    },
+    "homepage": "https://antinomy.ai/",
+    "files": [
+        "bin/**/*",
+        "install.js"
+    ],
+    "engines": {
+        "node": ">=18.0.0"
+    }
+}
