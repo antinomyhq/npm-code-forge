@@ -62,9 +62,13 @@ download_binary() {
 download_binary "https://github.com/antinomyhq/forge/releases/download/$VERSION/forge-aarch64-apple-darwin" "bin/darwin/arm64/forge-aarch64-apple-darwin"
 download_binary "https://github.com/antinomyhq/forge/releases/download/$VERSION/forge-x86_64-apple-darwin" "bin/darwin/x64/forge-x86_64-apple-darwin"
 
-# Linux
+# Linux (glibc)
 download_binary "https://github.com/antinomyhq/forge/releases/download/$VERSION/forge-aarch64-unknown-linux-gnu" "bin/linux/arm64/forge-aarch64-unknown-linux-gnu"
 download_binary "https://github.com/antinomyhq/forge/releases/download/$VERSION/forge-x86_64-unknown-linux-gnu" "bin/linux/x64/forge-x86_64-unknown-linux-gnu"
+
+# Linux (musl)
+download_binary "https://github.com/antinomyhq/forge/releases/download/$VERSION/forge-aarch64-unknown-linux-musl" "bin/linux/arm64/forge-aarch64-unknown-linux-musl" || echo "Warning: musl variant for ARM64 not available"
+download_binary "https://github.com/antinomyhq/forge/releases/download/$VERSION/forge-x86_64-unknown-linux-musl" "bin/linux/x64/forge-x86_64-unknown-linux-musl" || echo "Warning: musl variant for x64 not available"
 
 # Windows
 download_binary "https://github.com/antinomyhq/forge/releases/download/$VERSION/forge-aarch64-pc-windows-msvc.exe" "bin/win32/arm64/forge-aarch64-pc-windows-msvc.exe"
@@ -75,6 +79,13 @@ chmod +x bin/darwin/arm64/forge-aarch64-apple-darwin
 chmod +x bin/darwin/x64/forge-x86_64-apple-darwin
 chmod +x bin/linux/arm64/forge-aarch64-unknown-linux-gnu
 chmod +x bin/linux/x64/forge-x86_64-unknown-linux-gnu
+# Make musl binaries executable if they exist
+if [ -f bin/linux/arm64/forge-aarch64-unknown-linux-musl ]; then
+    chmod +x bin/linux/arm64/forge-aarch64-unknown-linux-musl
+fi
+if [ -f bin/linux/x64/forge-x86_64-unknown-linux-musl ]; then
+    chmod +x bin/linux/x64/forge-x86_64-unknown-linux-musl
+fi
 
 echo "Binaries downloaded and prepared for npm package"
 
