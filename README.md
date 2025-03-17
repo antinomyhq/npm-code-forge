@@ -23,7 +23,7 @@ This will automatically download the appropriate binary for your platform.
 Once installed, you can use the `forge` command:
 
 ```bash
-forge help
+forge --version
 ```
 
 ## License
