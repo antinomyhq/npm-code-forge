@@ -93,7 +93,7 @@ echo "Binaries downloaded and prepared for npm package"
 if [ -n "${NPM_TOKEN:-}" ]; then
     echo "Publishing to npm..."
     echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
-    npm publish || { 
+    npm publish --access public || { 
       echo "ERROR: Failed to publish to npm" >&2
       rm -f .npmrc
       exit 1
