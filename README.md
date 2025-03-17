@@ -7,7 +7,7 @@ Code Forge is an AI-powered coding assistant CLI that helps you write, review, a
 You can install Code Forge via npm:
 
 ```bash
-npm install -g code-forge
+npm install -g @antinomyhq/forge
 ```
 
 This will automatically download the appropriate binary for your platform.
