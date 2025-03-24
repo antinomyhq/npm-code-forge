@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const { join } = require('path');
-const { spawnSync } = require('child_process');
+const { spawn } = require('child_process');
 const { existsSync } = require('fs');
 
 // Get the correct binary extension based on platform
@@ -21,10 +21,20 @@ if (!existsSync(forgeBinaryPath)) {
 }
 
 // Execute the binary with the same arguments
-const result = spawnSync(forgeBinaryPath, process.argv.slice(2), { 
+const forgeProcess = spawn(forgeBinaryPath, process.argv.slice(2), { 
   stdio: 'inherit',
   shell: process.platform === 'win32' // Use shell on Windows
 });
 
-// Exit with the same code as the binary
-process.exit(result.status);
+// Pass through SIGINT signals to the child process
+process.on('SIGINT', () => {
+  // Instead of handling here, forward to the child
+  forgeProcess.kill('SIGINT');
+  // Don't exit - let the child process determine what happens
+});
+
+// Handle process exit
+forgeProcess.on('exit', (code) => {
+  // Only exit with code when the child actually exits
+  process.exit(code || 0);
+});
