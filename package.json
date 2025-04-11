@@ -1,6 +1,6 @@
 {
     "name": "@antinomyhq/forge",
-    "version": "0.63.0",
+    "version": "0.64.0",
     "description": "Code Forge CLI - an AI-powered coding assistant",
     "bin": {
         "forge": "forge.js"
