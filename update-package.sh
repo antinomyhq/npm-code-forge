@@ -22,16 +22,23 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
+PRIMARY_NPM_PACKAGE_NAME="@antinomyhq/forge"
+SECONDARY_NPM_PACKAGE_NAME="@forgecode/forge"
+
 # Set CI mode if running in CI environment
 if [ "${CI:-}" = "true" ]; then
     export AUTO_PUSH="true"
     echo "CI environment detected, enabling AUTO_PUSH"
 fi
 
+# Ensure package.json name is set to the primary package name for versioning
+echo "Ensuring package.json name is $PRIMARY_NPM_PACKAGE_NAME for versioning..."
+TARGET_PKG_NAME="$PRIMARY_NPM_PACKAGE_NAME" node -e "const fs = require('fs'); const pkgPath = 'package.json'; let pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8')); pkg.name = process.env.TARGET_PKG_NAME; fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 4) + '\n');" || { echo "ERROR: Failed to set primary package name to $PRIMARY_NPM_PACKAGE_NAME" >&2; exit 1; }
+
 # Update version in package.json
 echo "Updating package.json version to $VERSION..."
 npm version $VERSION --no-git-tag-version --allow-same-version || {
-  echo "ERROR: Failed to update npm version" >&2
+  echo "ERROR: Failed to update npm version for $PRIMARY_NPM_PACKAGE_NAME" >&2
   exit 1
 }
 
@@ -91,17 +98,40 @@ echo "Binaries downloaded and prepared for npm package"
 
 # Publish to npm if NPM_TOKEN is available
 if [ -n "${NPM_TOKEN:-}" ]; then
-    echo "Publishing to npm..."
     echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
-    npm publish --access public || { 
-      echo "ERROR: Failed to publish to npm" >&2
+
+    # Publish primary package ($PRIMARY_NPM_PACKAGE_NAME)
+    # package.json should already have PRIMARY_NPM_PACKAGE_NAME set from before npm version
+    echo "Publishing $PRIMARY_NPM_PACKAGE_NAME to npm..."
+    npm publish --access public || {
+      echo "ERROR: Failed to publish $PRIMARY_NPM_PACKAGE_NAME to npm" >&2
       rm -f .npmrc
       exit 1
     }
+    echo "✓ Package $PRIMARY_NPM_PACKAGE_NAME published to npm"
+
+    # Publish secondary package ($SECONDARY_NPM_PACKAGE_NAME)
+    echo "Updating package.json name to $SECONDARY_NPM_PACKAGE_NAME for publishing..."
+    TARGET_PKG_NAME="$SECONDARY_NPM_PACKAGE_NAME" node -e "const fs = require('fs'); const pkgPath = 'package.json'; let pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8')); pkg.name = process.env.TARGET_PKG_NAME; fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 4) + '\n');" || { echo "ERROR: Failed to set secondary package name to $SECONDARY_NPM_PACKAGE_NAME" >&2; rm -f .npmrc; exit 1; }
+
+    echo "Publishing $SECONDARY_NPM_PACKAGE_NAME to npm..."
+    npm publish --access public || {
+      echo "ERROR: Failed to publish $SECONDARY_NPM_PACKAGE_NAME to npm" >&2
+      # Attempt to restore primary package name before exiting
+      echo "Restoring package.json name to $PRIMARY_NPM_PACKAGE_NAME after failed publish..."
+      TARGET_PKG_NAME="$PRIMARY_NPM_PACKAGE_NAME" node -e "const fs = require('fs'); const pkgPath = 'package.json'; let pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8')); pkg.name = process.env.TARGET_PKG_NAME; fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 4) + '\n');"
+      rm -f .npmrc
+      exit 1
+    }
+    echo "✓ Package $SECONDARY_NPM_PACKAGE_NAME published to npm"
+
+    # Restore package.json to primary name for git commit
+    echo "Restoring package.json name to $PRIMARY_NPM_PACKAGE_NAME for git commitment..."
+    TARGET_PKG_NAME="$PRIMARY_NPM_PACKAGE_NAME" node -e "const fs = require('fs'); const pkgPath = 'package.json'; let pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8')); pkg.name = process.env.TARGET_PKG_NAME; fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 4) + '\n');" || { echo "ERROR: Failed to restore primary package name $PRIMARY_NPM_PACKAGE_NAME" >&2; rm -f .npmrc; exit 1; }
+
     rm -f .npmrc
-    echo "✓ Package published to npm"
 else
-    echo "NPM_TOKEN not set, skipping publish"
+    echo "NPM_TOKEN not set, skipping publish for $PRIMARY_NPM_PACKAGE_NAME and $SECONDARY_NPM_PACKAGE_NAME"
 fi
 
 # Configure git for CI if needed
