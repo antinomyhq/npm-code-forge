@@ -1,5 +1,5 @@
 {
-    "name": "@antinomyhq/forge",
+    "name": "@forgecode/forge",
     "version": "0.94.2",
     "description": "Code Forge CLI - an AI-powered coding assistant",
     "bin": {
@@ -25,9 +25,10 @@
     },
     "homepage": "https://antinomy.ai/",
     "files": [
-        "bin/**/*",
-        "install.js",
-        "forge.js"
+        "README.md",
+        "../../bin/**/*",
+        "../../install.js",
+        "../../forge.js"
     ],
     "engines": {
         "node": ">=18.0.0"

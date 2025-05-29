@@ -26,7 +26,19 @@ If you prefer not to install anything globally, you can use npx to run Code Forg
 npx @antinomyhq/forge
 ```
 
-Both methods will automatically download the appropriate binary for your platform.
+### Using Yarn
+
+You can also install using Yarn:
+
+```bash
+# Global installation
+yarn global add @antinomyhq/forge
+
+# Using yarn dlx (Yarn 2+)
+yarn dlx @antinomyhq/forge
+```
+
+All methods will automatically download the appropriate binary for your platform.
 
 ## Supported Platforms
 
@@ -44,6 +56,9 @@ forge --version
 
 # Or with npx
 npx @antinomyhq/forge --version
+
+# Or with yarn dlx
+yarn dlx @antinomyhq/forge --version
 ```
 
 ## Troubleshooting
