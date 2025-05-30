@@ -33,38 +33,34 @@ fi
 # Get the script directory to handle being called from anywhere
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Function to update a single package
-update_package() {
-    local package_dir="$1"
-    local is_primary="$2"  # true if this is the primary package for git operations
-    
-    echo "========================================="
-    echo "Updating package: $package_dir"
-    echo "========================================="
-    
-    PACKAGE_PATH="$SCRIPT_DIR/packages/$package_dir"
-    if [ ! -d "$PACKAGE_PATH" ]; then
-        echo "ERROR: Package directory $PACKAGE_PATH does not exist" >&2
-        return 1
-    fi
-    
-    echo "Changing to package directory: $PACKAGE_PATH"
-    cd "$PACKAGE_PATH" || { echo "ERROR: Failed to change to package directory" >&2; return 1; }
-    
-    # Verify package.json exists
-    if [ ! -f "package.json" ]; then
-        echo "ERROR: package.json not found in $PACKAGE_PATH" >&2
-        return 1
-    fi
-    
-    # Set package names based on which package we're working with
-    if [ "$package_dir" = "antinomyhq" ]; then
-        PRIMARY_NPM_PACKAGE_NAME="@antinomyhq/forge"
-        SECONDARY_NPM_PACKAGE_NAME="@forgecode/forge"
-    else
-        PRIMARY_NPM_PACKAGE_NAME="@forgecode/forge"
-        SECONDARY_NPM_PACKAGE_NAME="@antinomyhq/forge"
-    fi
+# Set the working directory to the script location
+cd "$SCRIPT_DIR" || { echo "ERROR: Failed to change to script directory" >&2; exit 1; }
+
+# Determine which packages to work with and set names accordingly
+if [ "$PACKAGE_TARGET" = "antinomyhq" ] || [ "$PACKAGE_TARGET" = "both" ]; then
+    PRIMARY_NPM_PACKAGE_NAME="@antinomyhq/forge"
+    SECONDARY_NPM_PACKAGE_NAME="@forgecode/forge"
+    PACKAGE_PATH="$SCRIPT_DIR/packages/antinomyhq"
+elif [ "$PACKAGE_TARGET" = "forgecode" ]; then
+    PRIMARY_NPM_PACKAGE_NAME="@forgecode/forge"  
+    SECONDARY_NPM_PACKAGE_NAME="@antinomyhq/forge"
+    PACKAGE_PATH="$SCRIPT_DIR/packages/forgecode"
+fi
+
+# Verify package directory exists
+if [ ! -d "$PACKAGE_PATH" ]; then
+    echo "ERROR: Package directory $PACKAGE_PATH does not exist" >&2
+    exit 1
+fi
+
+echo "Changing to package directory: $PACKAGE_PATH"
+cd "$PACKAGE_PATH" || { echo "ERROR: Failed to change to package directory" >&2; exit 1; }
+
+# Verify package.json exists
+if [ ! -f "package.json" ]; then
+    echo "ERROR: package.json not found in $PACKAGE_PATH" >&2
+    exit 1
+fi
 
 # Set CI mode if running in CI environment
 if [ "${CI:-}" = "true" ]; then
