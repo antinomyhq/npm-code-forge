@@ -9,6 +9,7 @@ if [ "${DEBUG:-}" = "true" ]; then
   set -x
 fi
 
+
 VERSION=$1
 
 if [ -z "$VERSION" ]; then
