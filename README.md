@@ -294,7 +294,6 @@ model: deepseek-r1-distill-llama-70b
 To use Amazon Bedrock models with Forge, you'll need to first set up the [Bedrock Access Gateway](https://github.com/aws-samples/bedrock-access-gateway):
 
 1. **Set up Bedrock Access Gateway**:
-
    - Follow the deployment steps in the [Bedrock Access Gateway repo](https://github.com/aws-samples/bedrock-access-gateway)
    - Create your own API key in Secrets Manager
    - Deploy the CloudFormation stack
@@ -342,9 +341,9 @@ Define custom commands as shortcuts for repetitive prompts:
 ```yaml
 # forge.yaml
 commands:
-  - name: "refactor"
-    description: "Refactor selected code"
-    prompt: "Please refactor this code to improve readability and performance"
+  - name: 'refactor'
+    description: 'Refactor selected code'
+    prompt: 'Please refactor this code to improve readability and performance'
 ```
 
 </details>
@@ -356,7 +355,7 @@ Specify the default AI model to use for all agents in the workflow.
 
 ```yaml
 # forge.yaml
-model: "claude-3.7-sonnet"
+model: 'claude-3.7-sonnet'
 ```
 
 </details>
