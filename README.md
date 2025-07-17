@@ -1,3 +1,5 @@
+🚨 **DEPRECATION NOTICE:** This package is no longer maintained. Please use [forgecode](https://www.npmjs.com/package/forgecode) instead. 🚨
+
 <h1 align="center">⚒️ Forge: AI-Enhanced Terminal Development Environment</h1>
 <p align="center">A comprehensive coding agent that integrates AI capabilities with your development environment</p>
 
